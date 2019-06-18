@@ -836,12 +836,15 @@ namespace ICSharpCode.SharpZipLib.Tests.Tar
 			}
 		}	
 		[Test]
+		[TestCase(1)]
+		[TestCase(100)]
+		[TestCase(128)]
 		[Category("Tar")]
-		public void StreamWithJapaneseName()
+		public void StreamWithJapaneseName(int length)
 		{
 			// U+3042 is Japanese Hiragana
 			// https://unicode.org/charts/PDF/U3040.pdf
-			var entryName = new string((char)0x3042, 10);
+			var entryName = new string((char)0x3042, length);
 			var data = new byte[32];
 			using(var memoryStream = new MemoryStream())
 			{
@@ -849,7 +852,7 @@ namespace ICSharpCode.SharpZipLib.Tests.Tar
 				{
 					var entry = TarEntry.CreateTarEntry(entryName);
 					entry.Size = 32;
-					tarOutput.PutNextEntry(entry, Encoding.UTF8);
+					tarOutput.PutNextEntry(entry);
 					tarOutput.Write(data, 0, data.Length);
 				}
 				using(var memInput = new MemoryStream(memoryStream.ToArray()))

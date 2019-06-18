@@ -274,7 +274,9 @@ namespace ICSharpCode.SharpZipLib.Tar
 				throw new ArgumentNullException(nameof(entry));
 			}
 
-			if (entry.TarHeader.Name.Length > TarHeader.NAMELEN)
+			var namelen = encoding != null ? encoding.GetByteCount(entry.TarHeader.Name) : entry.TarHeader.Name.Length;
+
+			if (namelen > TarHeader.NAMELEN)
 			{
 				var longHeader = new TarHeader();
 				longHeader.TypeFlag = TarHeader.LF_GNU_LONGNAME;
@@ -285,74 +287,17 @@ namespace ICSharpCode.SharpZipLib.Tar
 				longHeader.GroupName = entry.GroupName;
 				longHeader.UserName = entry.UserName;
 				longHeader.LinkName = "";
-				longHeader.Size = entry.TarHeader.Name.Length + 1;  // Plus one to avoid dropping last char
+				longHeader.Size = namelen + 1;  // Plus one to avoid dropping last char
 
 				longHeader.WriteHeader(blockBuffer, encoding);
 				buffer.WriteBlock(blockBuffer);  // Add special long filename header block
 
 				int nameCharIndex = 0;
 
-				while (nameCharIndex < entry.TarHeader.Name.Length + 1 /* we've allocated one for the null char, now we must make sure it gets written out */)
+				while (nameCharIndex < namelen + 1 /* we've allocated one for the null char, now we must make sure it gets written out */)
 				{
 					Array.Clear(blockBuffer, 0, blockBuffer.Length);
-					TarHeader.GetAsciiBytes(entry.TarHeader.Name, nameCharIndex, this.blockBuffer, 0, TarBuffer.BlockSize); // This func handles OK the extra char out of string length
-					nameCharIndex += TarBuffer.BlockSize;
-					buffer.WriteBlock(blockBuffer);
-				}
-			}
-
-			entry.WriteEntryHeader(blockBuffer, encoding);
-			buffer.WriteBlock(blockBuffer);
-
-			currBytes = 0;
-
-			currSize = entry.IsDirectory ? 0 : entry.Size;
-		}
-
-		/// <summary>
-		/// Put an entry on the output stream. This writes the entry's
-		/// header and positions the output stream for writing
-		/// the contents of the entry. Once this method is called, the
-		/// stream is ready for calls to write() to write the entry's
-		/// contents. Once the contents are written, closeEntry()
-		/// <B>MUST</B> be called to ensure that all buffered data
-		/// is completely written to the output stream.
-		/// </summary>
-		/// <param name="entry">
-		/// The TarEntry to be written to the archive.
-		/// </param>
-		/// <param name="enc">
-		/// name encoding
-		/// </param>
-		public void PutNextEntry(TarEntry entry, Encoding enc)
-		{
-			if (entry == null)
-			{
-				throw new ArgumentNullException(nameof(entry));
-			}
-
-			if (entry.TarHeader.Name.Length > TarHeader.NAMELEN)
-			{
-				var longHeader = new TarHeader();
-				longHeader.TypeFlag = TarHeader.LF_GNU_LONGNAME;
-				longHeader.Name = longHeader.Name + "././@LongLink";
-				longHeader.Mode = 420;//644 by default
-				longHeader.UserId = entry.UserId;
-				longHeader.GroupId = entry.GroupId;
-				longHeader.GroupName = entry.GroupName;
-				longHeader.UserName = entry.UserName;
-				longHeader.LinkName = "";
-				longHeader.Size = entry.TarHeader.Name.Length + 1;  // Plus one to avoid dropping last char
-
-				longHeader.WriteHeader(blockBuffer, encoding);
-				buffer.WriteBlock(blockBuffer);  // Add special long filename header block
-
-				int nameCharIndex = 0;
-
-				while (nameCharIndex < entry.TarHeader.Name.Length + 1 /* we've allocated one for the null char, now we must make sure it gets written out */)
-				{
-					Array.Clear(blockBuffer, 0, blockBuffer.Length);
-					TarHeader.GetAsciiBytes(entry.TarHeader.Name, nameCharIndex, this.blockBuffer, 0, TarBuffer.BlockSize, enc); // This func handles OK the extra char out of string length
+					TarHeader.GetAsciiBytes(entry.TarHeader.Name, nameCharIndex, this.blockBuffer, 0, TarBuffer.BlockSize, encoding); // This func handles OK the extra char out of string length
 					nameCharIndex += TarBuffer.BlockSize;
 					buffer.WriteBlock(blockBuffer);
 				}
