@@ -18,8 +18,18 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// Construct a TarInputStream with default block factor
 		/// </summary>
 		/// <param name="inputStream">stream to source data from</param>
+		[Obsolete]
 		public TarInputStream(Stream inputStream)
 			: this(inputStream, TarBuffer.DefaultBlockFactor)
+		{
+		}
+		/// <summary>
+		/// Construct a TarInputStream with default block factor
+		/// </summary>
+		/// <param name="inputStream">stream to source data from</param>
+		/// <param name="enc">name encoding</param>
+		public TarInputStream(Stream inputStream, Encoding enc)
+			: this(inputStream, TarBuffer.DefaultBlockFactor, enc)
 		{
 		}
 
@@ -28,10 +38,24 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// </summary>
 		/// <param name="inputStream">stream to source data from</param>
 		/// <param name="blockFactor">block factor to apply to archive</param>
+		[Obsolete]
 		public TarInputStream(Stream inputStream, int blockFactor)
 		{
 			this.inputStream = inputStream;
 			tarBuffer = TarBuffer.CreateInputTarBuffer(inputStream, blockFactor);
+		}
+
+		/// <summary>
+		/// Construct a TarInputStream with user specified block factor
+		/// </summary>
+		/// <param name="inputStream">stream to source data from</param>
+		/// <param name="blockFactor">block factor to apply to archive</param>
+		/// <param name="enc">name encoding</param>
+		public TarInputStream(Stream inputStream, int blockFactor, Encoding enc)
+		{
+			this.inputStream = inputStream;
+			tarBuffer = TarBuffer.CreateInputTarBuffer(inputStream, blockFactor);
+			encoding = enc;
 		}
 
 		#endregion Constructors
@@ -452,7 +476,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 				try
 				{
 					var header = new TarHeader();
-					header.ParseBuffer(headerBuf);
+					header.ParseBuffer(headerBuf, encoding);
 					if (!header.IsChecksumValid)
 					{
 						throw new TarException("Header checksum is invalid");
@@ -478,7 +502,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 								throw new InvalidHeaderException("Failed to read long name entry");
 							}
 
-							longName.Append(TarHeader.ParseName(nameBuffer, 0, numRead).ToString());
+							longName.Append(TarHeader.ParseName(nameBuffer, 0, numRead, encoding).ToString());
 							numToRead -= numRead;
 						}
 
@@ -538,7 +562,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 
 					if (entryFactory == null)
 					{
-						currentEntry = new TarEntry(headerBuf);
+						currentEntry = new TarEntry(headerBuf, encoding);
 						if (longName != null)
 						{
 							currentEntry.Name = longName.ToString();
@@ -653,6 +677,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 			/// </summary>
 			/// <param name="name">The name to use for the entry</param>
 			/// <returns>A new <see cref="TarEntry"/></returns>
+			[Obsolete]
 			public TarEntry CreateEntry(string name)
 			{
 				return TarEntry.CreateTarEntry(name);
@@ -673,9 +698,20 @@ namespace ICSharpCode.SharpZipLib.Tar
 			/// </summary>
 			/// <param name="headerBuffer">The buffer containing entry details.</param>
 			/// <returns>A new <see cref="TarEntry"/></returns>
+			[Obsolete]
 			public TarEntry CreateEntry(byte[] headerBuffer)
 			{
 				return new TarEntry(headerBuffer);
+			}
+			/// <summary>
+			/// Create an entry based on details in <paramref name="headerBuffer">header</paramref>
+			/// </summary>
+			/// <param name="headerBuffer">The buffer containing entry details.</param>
+			/// <param name="enc">name encoding</param>
+			/// <returns>A new <see cref="TarEntry"/></returns>
+			public TarEntry CreateEntry(byte[] headerBuffer, Encoding enc)
+			{
+				return new TarEntry(headerBuffer, enc);
 			}
 		}
 
@@ -720,6 +756,8 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// Stream used as the source of input data.
 		/// </summary>
 		private readonly Stream inputStream;
+
+		private readonly Encoding encoding;
 
 		#endregion Instance Fields
 	}

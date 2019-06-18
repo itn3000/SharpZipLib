@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text;
 
 namespace ICSharpCode.SharpZipLib.Tar
 {
@@ -49,10 +50,27 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <param name = "headerBuffer">
 		/// The header bytes from a tar archive entry.
 		/// </param>
+		[Obsolete]
 		public TarEntry(byte[] headerBuffer)
 		{
 			header = new TarHeader();
 			header.ParseBuffer(headerBuffer);
+		}
+
+		/// <summary>
+		/// Construct an entry from an archive's header bytes. File is set
+		/// to null.
+		/// </summary>
+		/// <param name = "headerBuffer">
+		/// The header bytes from a tar archive entry.
+		/// </param>
+		/// <param name = "enc">
+		/// name encoding
+		/// </param>
+		public TarEntry(byte[] headerBuffer, Encoding enc)
+		{
+			header = new TarHeader();
+			header.ParseBuffer(headerBuffer, enc);
 		}
 
 		/// <summary>
@@ -469,9 +487,24 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <param name = "outBuffer">
 		/// The tar entry header buffer to fill in.
 		/// </param>
+		[Obsolete]
 		public void WriteEntryHeader(byte[] outBuffer)
 		{
 			header.WriteHeader(outBuffer);
+		}
+
+		/// <summary>
+		/// Write an entry's header information to a header buffer.
+		/// </summary>
+		/// <param name = "outBuffer">
+		/// The tar entry header buffer to fill in.
+		/// </param>
+		/// <param name = "enc">
+		/// name encoding
+		/// </param>
+		public void WriteEntryHeader(byte[] outBuffer, Encoding enc)
+		{
+			header.WriteHeader(outBuffer, enc);
 		}
 
 		/// <summary>
@@ -484,9 +517,28 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <param name="newName">
 		/// The new name to place into the header buffer.
 		/// </param>
+		[Obsolete]
 		static public void AdjustEntryName(byte[] buffer, string newName)
 		{
 			TarHeader.GetNameBytes(newName, buffer, 0, TarHeader.NAMELEN);
+		}
+
+		/// <summary>
+		/// Convenience method that will modify an entry's name directly
+		/// in place in an entry header buffer byte array.
+		/// </summary>
+		/// <param name="buffer">
+		/// The buffer containing the entry header to modify.
+		/// </param>
+		/// <param name="newName">
+		/// The new name to place into the header buffer.
+		/// </param>
+		/// <param name="enc">
+		/// name encoding
+		/// </param>
+		static public void AdjustEntryName(byte[] buffer, string newName, Encoding enc)
+		{
+			TarHeader.GetNameBytes(newName, buffer, 0, TarHeader.NAMELEN, enc);
 		}
 
 		/// <summary>

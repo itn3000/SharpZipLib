@@ -100,6 +100,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// </summary>
 		/// <param name="inputStream">The stream to retrieve archive data from.</param>
 		/// <returns>Returns a new <see cref="TarArchive"/> suitable for reading from.</returns>
+		[Obsolete]
 		public static TarArchive CreateInputTarArchive(Stream inputStream)
 		{
 			if (inputStream == null)
@@ -122,11 +123,42 @@ namespace ICSharpCode.SharpZipLib.Tar
 		}
 
 		/// <summary>
+		/// The InputStream based constructors create a TarArchive for the
+		/// purposes of extracting or listing a tar archive. Thus, use
+		/// these constructors when you wish to extract files from or list
+		/// the contents of an existing tar archive.
+		/// </summary>
+		/// <param name="inputStream">The stream to retrieve archive data from.</param>
+		/// <param name="enc">name encoding</param>
+		/// <returns>Returns a new <see cref="TarArchive"/> suitable for reading from.</returns>
+		public static TarArchive CreateInputTarArchive(Stream inputStream, Encoding enc)
+		{
+			if (inputStream == null)
+			{
+				throw new ArgumentNullException(nameof(inputStream));
+			}
+
+			var tarStream = inputStream as TarInputStream;
+
+			TarArchive result;
+			if (tarStream != null)
+			{
+				result = new TarArchive(tarStream);
+			}
+			else
+			{
+				result = CreateInputTarArchive(inputStream, TarBuffer.DefaultBlockFactor, enc);
+			}
+			return result;
+		}
+
+		/// <summary>
 		/// Create TarArchive for reading setting block factor
 		/// </summary>
 		/// <param name="inputStream">A stream containing the tar archive contents</param>
 		/// <param name="blockFactor">The blocking factor to apply</param>
 		/// <returns>Returns a <see cref="TarArchive"/> suitable for reading.</returns>
+		[Obsolete]
 		public static TarArchive CreateInputTarArchive(Stream inputStream, int blockFactor)
 		{
 			if (inputStream == null)
@@ -142,6 +174,27 @@ namespace ICSharpCode.SharpZipLib.Tar
 			return new TarArchive(new TarInputStream(inputStream, blockFactor));
 		}
 
+		/// <summary>
+		/// Create TarArchive for reading setting block factor
+		/// </summary>
+		/// <param name="inputStream">A stream containing the tar archive contents</param>
+		/// <param name="blockFactor">The blocking factor to apply</param>
+		/// <param name="enc">name encoding</param>
+		/// <returns>Returns a <see cref="TarArchive"/> suitable for reading.</returns>
+		public static TarArchive CreateInputTarArchive(Stream inputStream, int blockFactor, Encoding enc)
+		{
+			if (inputStream == null)
+			{
+				throw new ArgumentNullException(nameof(inputStream));
+			}
+
+			if (inputStream is TarInputStream)
+			{
+				throw new ArgumentException("TarInputStream not valid");
+			}
+
+			return new TarArchive(new TarInputStream(inputStream, blockFactor, enc));
+		}
 		/// <summary>
 		/// Create a TarArchive for writing to, using the default blocking factor
 		/// </summary>
