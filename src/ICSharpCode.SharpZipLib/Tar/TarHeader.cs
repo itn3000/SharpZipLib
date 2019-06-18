@@ -1106,9 +1106,9 @@ namespace ICSharpCode.SharpZipLib.Tar
 			int i;
 			if(enc != null)
 			{
-				var nameArray = name.ToCharArray();
-				var bytes = enc.GetBytes(nameArray, nameOffset, name.Length - nameOffset);
-				for(i = 0; i < length && nameOffset + i < name.Length; ++i)
+				var nameArray = name.ToCharArray(nameOffset, Math.Min(name.Length - nameOffset, length));
+				var bytes = enc.GetBytes(nameArray, 0, nameArray.Length);
+				for(i = 0; i < length && nameOffset + i < bytes.Length; ++i)
 				{
 					buffer[bufferOffset + i] = bytes[i];
 				}
