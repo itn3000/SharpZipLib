@@ -1311,7 +1311,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 			{
 				var chars = toAdd.ToCharArray();
 				var bytes = enc.GetBytes(chars, nameOffset, Math.Min(toAdd.Length - nameOffset, length));
-				for (i = 0; i < length && nameOffset + i < toAdd.Length; ++i)
+				for (i = 0; i < length && nameOffset + i < bytes.Length; ++i)
 				{
 					buffer[bufferOffset + i] = bytes[i];
 				}
