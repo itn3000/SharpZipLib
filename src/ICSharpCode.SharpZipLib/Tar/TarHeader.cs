@@ -600,7 +600,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <param name = "header">
 		/// The tar entry header buffer to get information from.
 		/// </param>
-		[Obsolete]
+		[Obsolete("temporary for notification")]
 		public void ParseBuffer(byte[] header)
 		{
 			ParseBuffer(header, null);
@@ -610,7 +610,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// 'Write' header information to buffer provided, updating the <see cref="Checksum">check sum</see>.
 		/// </summary>
 		/// <param name="outBuffer">output buffer for header information</param>
-		[Obsolete]
+		[Obsolete("temporary for notification")]
 		public void WriteHeader(byte[] outBuffer)
 		{
 			WriteHeader(outBuffer, null);
@@ -814,7 +814,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <returns>
 		/// The name parsed.
 		/// </returns>
-		[Obsolete]
+		[Obsolete("temporary for notification")]
 		static public StringBuilder ParseName(byte[] header, int offset, int length)
 		{
 			return ParseName(header, offset, length, null);
@@ -898,7 +898,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <param name="bufferOffset">The index of the first byte to add</param>
 		/// <param name="length">The number of characters/bytes to add</param>
 		/// <returns>The next free index in the <paramref name="buffer"/></returns>
-		[Obsolete]
+		[Obsolete("temporary for notification")]
 		public static int GetNameBytes(StringBuilder name, int nameOffset, byte[] buffer, int bufferOffset, int length)
 		{
 			return GetNameBytes(name.ToString(), nameOffset, buffer, bufferOffset, length, null);
@@ -913,7 +913,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <param name="bufferOffset">The index of the first byte to add</param>
 		/// <param name="length">The number of characters/bytes to add</param>
 		/// <returns>The next free index in the <paramref name="buffer"/></returns>
-		[Obsolete]
+		[Obsolete("temporary for notification")]
 		public static int GetNameBytes(string name, int nameOffset, byte[] buffer, int bufferOffset, int length)
 		{
 			return GetNameBytes(name, nameOffset, buffer, bufferOffset, length, null);
@@ -984,7 +984,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// The index of the next free byte in the buffer
 		/// </returns>
 		/// TODO: what should be default behavior?(omit upper byte or UTF8?)
-		[Obsolete]
+		[Obsolete("temporary for notification")]
 		public static int GetNameBytes(StringBuilder name, byte[] buffer, int offset, int length)
 		{
 			return GetNameBytes(name, buffer, offset, length, null);
@@ -1035,7 +1035,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <param name="length">The number of header bytes to add</param>
 		/// <returns>The index of the next free byte in the buffer</returns>
 		/// TODO: what should be default behavior?(omit upper byte or UTF8?)
-		[Obsolete]
+		[Obsolete("temporary for notification")]
 		public static int GetNameBytes(string name, byte[] buffer, int offset, int length)
 		{
 			return GetNameBytes(name, buffer, offset, length, null);

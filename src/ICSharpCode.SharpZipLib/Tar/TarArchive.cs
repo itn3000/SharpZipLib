@@ -100,7 +100,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// </summary>
 		/// <param name="inputStream">The stream to retrieve archive data from.</param>
 		/// <returns>Returns a new <see cref="TarArchive"/> suitable for reading from.</returns>
-		[Obsolete]
+		[Obsolete("temporary for notification")]
 		public static TarArchive CreateInputTarArchive(Stream inputStream)
 		{
 			return CreateInputTarArchive(inputStream, null);
@@ -142,7 +142,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <param name="inputStream">A stream containing the tar archive contents</param>
 		/// <param name="blockFactor">The blocking factor to apply</param>
 		/// <returns>Returns a <see cref="TarArchive"/> suitable for reading.</returns>
-		[Obsolete]
+		[Obsolete("temporary for notification")]
 		public static TarArchive CreateInputTarArchive(Stream inputStream, int blockFactor)
 		{
 			return CreateInputTarArchive(inputStream, blockFactor, null);
