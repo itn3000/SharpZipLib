@@ -285,6 +285,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// Get the name of this entry.
 		/// </summary>
 		/// <returns>The entry's name.</returns>
+		/// TODO: what should be default behavior?(omit upper byte or UTF8?)
 		[Obsolete("Use the Name property instead", true)]
 		public string GetName()
 		{
@@ -943,16 +944,15 @@ namespace ICSharpCode.SharpZipLib.Tar
 			int i;
 			if(enc != null)
 			{
+				// it can be more sufficient if using Span or unsafe
 				var nameArray = name.ToCharArray(nameOffset, Math.Min(name.Length - nameOffset, length));
+				// it can be more sufficient if using Span(or unsafe?) and ArrayPool for temporary buffer
 				var bytes = enc.GetBytes(nameArray, 0, nameArray.Length);
-				for(i = 0; i < length && nameOffset + i < bytes.Length; ++i)
-				{
-					buffer[bufferOffset + i] = bytes[i];
-				}
+				i = Math.Min(bytes.Length, length);
+				Array.Copy(bytes, 0, buffer, bufferOffset, i);
 			}
 			else
 			{
-
 				for (i = 0; i < length && nameOffset + i < name.Length; ++i)
 				{
 					buffer[bufferOffset + i] = (byte)name[nameOffset + i];
@@ -983,6 +983,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <returns>
 		/// The index of the next free byte in the buffer
 		/// </returns>
+		/// TODO: what should be default behavior?(omit upper byte or UTF8?)
 		[Obsolete]
 		public static int GetNameBytes(StringBuilder name, byte[] buffer, int offset, int length)
 		{
@@ -1033,6 +1034,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <param name="offset">The offset into the buffer from which to start adding</param>
 		/// <param name="length">The number of header bytes to add</param>
 		/// <returns>The index of the next free byte in the buffer</returns>
+		/// TODO: what should be default behavior?(omit upper byte or UTF8?)
 		[Obsolete]
 		public static int GetNameBytes(string name, byte[] buffer, int offset, int length)
 		{
@@ -1073,25 +1075,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <returns>The next free index in the buffer.</returns>
 		public static int GetAsciiBytes(string toAdd, int nameOffset, byte[] buffer, int bufferOffset, int length)
 		{
-			if (toAdd == null)
-			{
-				throw new ArgumentNullException(nameof(toAdd));
-			}
-
-			if (buffer == null)
-			{
-				throw new ArgumentNullException(nameof(buffer));
-			}
-
-			int i;
-			for (i = 0; i < length && nameOffset + i < toAdd.Length; ++i)
-			{
-				buffer[bufferOffset + i] = (byte)toAdd[nameOffset + i];
-			}
-			// If length is beyond the toAdd string length (which is OK by the prev loop condition), eg if a field has fixed length and the string is shorter, make sure all of the extra chars are written as NULLs, so that the reader func would ignore them and get back the original string
-			for (; i < length; ++i)
-				buffer[bufferOffset + i] = 0;
-			return bufferOffset + length;
+			return GetAsciiBytes(toAdd, nameOffset, buffer, bufferOffset, length, null);
 		}
 
 		/// <summary>
@@ -1126,12 +1110,12 @@ namespace ICSharpCode.SharpZipLib.Tar
 			}
 			else
 			{
+				// It can be more sufficient if using unsafe code or Span(ToCharArray can be omitted)
 				var chars = toAdd.ToCharArray();
+				// It can be more sufficient if using Span(or unsafe?) and ArrayPool for temporary buffer
 				var bytes = enc.GetBytes(chars, nameOffset, Math.Min(toAdd.Length - nameOffset, length));
-				for (i = 0; i < length && nameOffset + i < bytes.Length; ++i)
-				{
-					buffer[bufferOffset + i] = bytes[i];
-				}
+				i = Math.Min(bytes.Length, length);
+				Array.Copy(bytes, 0, buffer, bufferOffset, i);
 			}
 			// If length is beyond the toAdd string length (which is OK by the prev loop condition), eg if a field has fixed length and the string is shorter, make sure all of the extra chars are written as NULLs, so that the reader func would ignore them and get back the original string
 			for (; i < length; ++i)
