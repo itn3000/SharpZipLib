@@ -602,64 +602,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		[Obsolete]
 		public void ParseBuffer(byte[] header)
 		{
-			if (header == null)
-			{
-				throw new ArgumentNullException(nameof(header));
-			}
-
-			int offset = 0;
-
-			name = ParseName(header, offset, NAMELEN).ToString();
-			offset += NAMELEN;
-
-			mode = (int)ParseOctal(header, offset, MODELEN);
-			offset += MODELEN;
-
-			UserId = (int)ParseOctal(header, offset, UIDLEN);
-			offset += UIDLEN;
-
-			GroupId = (int)ParseOctal(header, offset, GIDLEN);
-			offset += GIDLEN;
-
-			Size = ParseBinaryOrOctal(header, offset, SIZELEN);
-			offset += SIZELEN;
-
-			ModTime = GetDateTimeFromCTime(ParseOctal(header, offset, MODTIMELEN));
-			offset += MODTIMELEN;
-
-			checksum = (int)ParseOctal(header, offset, CHKSUMLEN);
-			offset += CHKSUMLEN;
-
-			TypeFlag = header[offset++];
-
-			LinkName = ParseName(header, offset, NAMELEN).ToString();
-			offset += NAMELEN;
-
-			Magic = ParseName(header, offset, MAGICLEN).ToString();
-			offset += MAGICLEN;
-
-			if (Magic == "ustar")
-			{
-				Version = ParseName(header, offset, VERSIONLEN).ToString();
-				offset += VERSIONLEN;
-
-				UserName = ParseName(header, offset, UNAMELEN).ToString();
-				offset += UNAMELEN;
-
-				GroupName = ParseName(header, offset, GNAMELEN).ToString();
-				offset += GNAMELEN;
-
-				DevMajor = (int)ParseOctal(header, offset, DEVLEN);
-				offset += DEVLEN;
-
-				DevMinor = (int)ParseOctal(header, offset, DEVLEN);
-				offset += DEVLEN;
-
-				string prefix = ParseName(header, offset, PREFIXLEN).ToString();
-				if (!string.IsNullOrEmpty(prefix)) Name = prefix + '/' + Name;
-			}
-
-			isChecksumValid = Checksum == TarHeader.MakeCheckSum(header);
+			ParseBuffer(header, null);
 		}
 
 		/// <summary>
@@ -669,50 +612,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		[Obsolete]
 		public void WriteHeader(byte[] outBuffer)
 		{
-			if (outBuffer == null)
-			{
-				throw new ArgumentNullException(nameof(outBuffer));
-			}
-
-			int offset = 0;
-
-			offset = GetNameBytes(Name, outBuffer, offset, NAMELEN);
-			offset = GetOctalBytes(mode, outBuffer, offset, MODELEN);
-			offset = GetOctalBytes(UserId, outBuffer, offset, UIDLEN);
-			offset = GetOctalBytes(GroupId, outBuffer, offset, GIDLEN);
-
-			offset = GetBinaryOrOctalBytes(Size, outBuffer, offset, SIZELEN);
-			offset = GetOctalBytes(GetCTime(ModTime), outBuffer, offset, MODTIMELEN);
-
-			int csOffset = offset;
-			for (int c = 0; c < CHKSUMLEN; ++c)
-			{
-				outBuffer[offset++] = (byte)' ';
-			}
-
-			outBuffer[offset++] = TypeFlag;
-
-			offset = GetNameBytes(LinkName, outBuffer, offset, NAMELEN);
-			offset = GetAsciiBytes(Magic, 0, outBuffer, offset, MAGICLEN);
-			offset = GetNameBytes(Version, outBuffer, offset, VERSIONLEN);
-			offset = GetNameBytes(UserName, outBuffer, offset, UNAMELEN);
-			offset = GetNameBytes(GroupName, outBuffer, offset, GNAMELEN);
-
-			if ((TypeFlag == LF_CHR) || (TypeFlag == LF_BLK))
-			{
-				offset = GetOctalBytes(DevMajor, outBuffer, offset, DEVLEN);
-				offset = GetOctalBytes(DevMinor, outBuffer, offset, DEVLEN);
-			}
-
-			for (; offset < outBuffer.Length;)
-			{
-				outBuffer[offset++] = 0;
-			}
-
-			checksum = ComputeCheckSum(outBuffer);
-
-			GetCheckSumOctalBytes(checksum, outBuffer, csOffset, CHKSUMLEN);
-			isChecksumValid = true;
+			WriteHeader(outBuffer, null);
 		}
 
 		/// <summary>
@@ -916,38 +816,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		[Obsolete]
 		static public StringBuilder ParseName(byte[] header, int offset, int length)
 		{
-			if (header == null)
-			{
-				throw new ArgumentNullException(nameof(header));
-			}
-
-			if (offset < 0)
-			{
-				throw new ArgumentOutOfRangeException(nameof(offset), "Cannot be less than zero");
-			}
-
-			if (length < 0)
-			{
-				throw new ArgumentOutOfRangeException(nameof(length), "Cannot be less than zero");
-			}
-
-			if (offset + length > header.Length)
-			{
-				throw new ArgumentException("Exceeds header size", nameof(length));
-			}
-
-			var result = new StringBuilder(length);
-
-			for (int i = offset; i < offset + length; ++i)
-			{
-				if (header[i] == 0)
-				{
-					break;
-				}
-				result.Append((char)header[i]);
-			}
-
-			return result;
+			return ParseName(header, offset, length, null);
 		}
 
 		/// <summary>
@@ -1031,17 +900,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		[Obsolete]
 		public static int GetNameBytes(StringBuilder name, int nameOffset, byte[] buffer, int bufferOffset, int length)
 		{
-			if (name == null)
-			{
-				throw new ArgumentNullException(nameof(name));
-			}
-
-			if (buffer == null)
-			{
-				throw new ArgumentNullException(nameof(buffer));
-			}
-
-			return GetNameBytes(name.ToString(), nameOffset, buffer, bufferOffset, length);
+			return GetNameBytes(name.ToString(), nameOffset, buffer, bufferOffset, length, null);
 		}
 
 		/// <summary>
@@ -1056,29 +915,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		[Obsolete]
 		public static int GetNameBytes(string name, int nameOffset, byte[] buffer, int bufferOffset, int length)
 		{
-			if (name == null)
-			{
-				throw new ArgumentNullException(nameof(name));
-			}
-
-			if (buffer == null)
-			{
-				throw new ArgumentNullException(nameof(buffer));
-			}
-
-			int i;
-
-			for (i = 0; i < length && nameOffset + i < name.Length; ++i)
-			{
-				buffer[bufferOffset + i] = (byte)name[nameOffset + i];
-			}
-
-			for (; i < length; ++i)
-			{
-				buffer[bufferOffset + i] = 0;
-			}
-
-			return bufferOffset + length;
+			return GetNameBytes(name, nameOffset, buffer, bufferOffset, length, null);
 		}
 
 		/// <summary>
@@ -1149,17 +986,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		[Obsolete]
 		public static int GetNameBytes(StringBuilder name, byte[] buffer, int offset, int length)
 		{
-			if (name == null)
-			{
-				throw new ArgumentNullException(nameof(name));
-			}
-
-			if (buffer == null)
-			{
-				throw new ArgumentNullException(nameof(buffer));
-			}
-
-			return GetNameBytes(name.ToString(), 0, buffer, offset, length);
+			return GetNameBytes(name, buffer, offset, length, null);
 		}
 
 		/// <summary>
@@ -1209,17 +1036,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		[Obsolete]
 		public static int GetNameBytes(string name, byte[] buffer, int offset, int length)
 		{
-			if (name == null)
-			{
-				throw new ArgumentNullException(nameof(name));
-			}
-
-			if (buffer == null)
-			{
-				throw new ArgumentNullException(nameof(buffer));
-			}
-
-			return GetNameBytes(name, 0, buffer, offset, length);
+			return GetNameBytes(name, buffer, offset, length, null);
 		}
 
 		/// <summary>

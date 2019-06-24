@@ -51,10 +51,8 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// The header bytes from a tar archive entry.
 		/// </param>
 		[Obsolete]
-		public TarEntry(byte[] headerBuffer)
+		public TarEntry(byte[] headerBuffer) : this(headerBuffer, null)
 		{
-			header = new TarHeader();
-			header.ParseBuffer(headerBuffer);
 		}
 
 		/// <summary>
@@ -490,7 +488,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		[Obsolete]
 		public void WriteEntryHeader(byte[] outBuffer)
 		{
-			header.WriteHeader(outBuffer);
+			WriteEntryHeader(outBuffer, null);
 		}
 
 		/// <summary>
@@ -520,7 +518,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		[Obsolete]
 		static public void AdjustEntryName(byte[] buffer, string newName)
 		{
-			TarHeader.GetNameBytes(newName, buffer, 0, TarHeader.NAMELEN);
+			AdjustEntryName(buffer, newName, null);
 		}
 
 		/// <summary>

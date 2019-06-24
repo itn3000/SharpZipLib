@@ -20,7 +20,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <param name="inputStream">stream to source data from</param>
 		[Obsolete]
 		public TarInputStream(Stream inputStream)
-			: this(inputStream, TarBuffer.DefaultBlockFactor)
+			: this(inputStream, TarBuffer.DefaultBlockFactor, null)
 		{
 		}
 		/// <summary>
@@ -43,6 +43,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		{
 			this.inputStream = inputStream;
 			tarBuffer = TarBuffer.CreateInputTarBuffer(inputStream, blockFactor);
+			encoding = null;
 		}
 
 		/// <summary>
@@ -677,7 +678,6 @@ namespace ICSharpCode.SharpZipLib.Tar
 			/// </summary>
 			/// <param name="name">The name to use for the entry</param>
 			/// <returns>A new <see cref="TarEntry"/></returns>
-			[Obsolete]
 			public TarEntry CreateEntry(string name)
 			{
 				return TarEntry.CreateTarEntry(name);
@@ -701,7 +701,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 			[Obsolete]
 			public TarEntry CreateEntry(byte[] headerBuffer)
 			{
-				return new TarEntry(headerBuffer);
+				return new TarEntry(headerBuffer, null);
 			}
 			/// <summary>
 			/// Create an entry based on details in <paramref name="headerBuffer">header</paramref>

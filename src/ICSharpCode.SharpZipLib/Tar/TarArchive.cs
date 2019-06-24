@@ -103,23 +103,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		[Obsolete]
 		public static TarArchive CreateInputTarArchive(Stream inputStream)
 		{
-			if (inputStream == null)
-			{
-				throw new ArgumentNullException(nameof(inputStream));
-			}
-
-			var tarStream = inputStream as TarInputStream;
-
-			TarArchive result;
-			if (tarStream != null)
-			{
-				result = new TarArchive(tarStream);
-			}
-			else
-			{
-				result = CreateInputTarArchive(inputStream, TarBuffer.DefaultBlockFactor);
-			}
-			return result;
+			return CreateInputTarArchive(inputStream, null);
 		}
 
 		/// <summary>
@@ -161,17 +145,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		[Obsolete]
 		public static TarArchive CreateInputTarArchive(Stream inputStream, int blockFactor)
 		{
-			if (inputStream == null)
-			{
-				throw new ArgumentNullException(nameof(inputStream));
-			}
-
-			if (inputStream is TarInputStream)
-			{
-				throw new ArgumentException("TarInputStream not valid");
-			}
-
-			return new TarArchive(new TarInputStream(inputStream, blockFactor));
+			return CreateInputTarArchive(inputStream, blockFactor, null);
 		}
 
 		/// <summary>
