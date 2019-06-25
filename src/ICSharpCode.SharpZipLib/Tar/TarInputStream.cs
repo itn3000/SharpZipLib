@@ -18,7 +18,6 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// Construct a TarInputStream with default block factor
 		/// </summary>
 		/// <param name="inputStream">stream to source data from</param>
-		[Obsolete("temporary for notification")]
 		public TarInputStream(Stream inputStream)
 			: this(inputStream, TarBuffer.DefaultBlockFactor, null)
 		{
@@ -38,7 +37,6 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// </summary>
 		/// <param name="inputStream">stream to source data from</param>
 		/// <param name="blockFactor">block factor to apply to archive</param>
-		[Obsolete("temporary for notification")]
 		public TarInputStream(Stream inputStream, int blockFactor)
 		{
 			this.inputStream = inputStream;
@@ -698,7 +696,6 @@ namespace ICSharpCode.SharpZipLib.Tar
 			/// </summary>
 			/// <param name="headerBuffer">The buffer containing entry details.</param>
 			/// <returns>A new <see cref="TarEntry"/></returns>
-			[Obsolete("temporary for notification")]
 			public TarEntry CreateEntry(byte[] headerBuffer)
 			{
 				return new TarEntry(headerBuffer, null);

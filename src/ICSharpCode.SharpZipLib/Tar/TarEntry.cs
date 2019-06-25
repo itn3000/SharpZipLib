@@ -50,7 +50,6 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <param name = "headerBuffer">
 		/// The header bytes from a tar archive entry.
 		/// </param>
-		[Obsolete("temporary for notification")]
 		public TarEntry(byte[] headerBuffer) : this(headerBuffer, null)
 		{
 		}
@@ -485,7 +484,6 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <param name = "outBuffer">
 		/// The tar entry header buffer to fill in.
 		/// </param>
-		[Obsolete("temporary for notification")]
 		public void WriteEntryHeader(byte[] outBuffer)
 		{
 			WriteEntryHeader(outBuffer, null);
@@ -515,7 +513,6 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <param name="newName">
 		/// The new name to place into the header buffer.
 		/// </param>
-		[Obsolete("temporary for notification")]
 		static public void AdjustEntryName(byte[] buffer, string newName)
 		{
 			AdjustEntryName(buffer, newName, null);
