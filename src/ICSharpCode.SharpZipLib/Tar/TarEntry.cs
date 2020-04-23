@@ -62,7 +62,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// The header bytes from a tar archive entry.
 		/// </param>
 		/// <param name = "nameEncoding">
-		/// The <see cref="Encoding"/> used for the Name fields
+		/// The <see cref="Encoding"/> used for the Name fields, or null for ASCII only
 		/// </param>
 		public TarEntry(byte[] headerBuffer, Encoding nameEncoding)
 		{
@@ -496,7 +496,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// The tar entry header buffer to fill in.
 		/// </param>
 		/// <param name = "nameEncoding">
-		/// The <see cref="Encoding"/> used for the Name fields
+		/// The <see cref="Encoding"/> used for the Name fields, or null for ASCII only
 		/// </param>
 		public void WriteEntryHeader(byte[] outBuffer, Encoding nameEncoding)
 		{
@@ -529,7 +529,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// The new name to place into the header buffer.
 		/// </param>
 		/// <param name="nameEncoding">
-		/// The <see cref="Encoding"/> used for the Name fields
+		/// The <see cref="Encoding"/> used for the Name fields, or null for ASCII only
 		/// </param>
 		static public void AdjustEntryName(byte[] buffer, string newName, Encoding nameEncoding)
 		{

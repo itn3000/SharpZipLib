@@ -112,7 +112,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// the contents of an existing tar archive.
 		/// </summary>
 		/// <param name="inputStream">The stream to retrieve archive data from.</param>
-		/// <param name="nameEncoding">The <see cref="Encoding"/> used for the Name fields</param>
+		/// <param name="nameEncoding">The <see cref="Encoding"/> used for the Name fields, or null for ASCII only</param>
 		/// <returns>Returns a new <see cref="TarArchive"/> suitable for reading from.</returns>
 		public static TarArchive CreateInputTarArchive(Stream inputStream, Encoding nameEncoding)
 		{
@@ -151,7 +151,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// </summary>
 		/// <param name="inputStream">A stream containing the tar archive contents</param>
 		/// <param name="blockFactor">The blocking factor to apply</param>
-		/// <param name="nameEncoding">name encoding</param>
+		/// <param name="nameEncoding">The <see cref="Encoding"/> used for the Name fields, or null for ASCII only</param>
 		/// <returns>Returns a <see cref="TarArchive"/> suitable for reading.</returns>
 		public static TarArchive CreateInputTarArchive(Stream inputStream, int blockFactor, Encoding nameEncoding)
 		{

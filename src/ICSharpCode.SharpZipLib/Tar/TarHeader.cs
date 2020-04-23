@@ -529,7 +529,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// The tar entry header buffer to get information from.
 		/// </param>
 		/// <param name = "nameEncoding">
-		/// The <see cref="Encoding"/> used for the Name field
+		/// The <see cref="Encoding"/> used for the Name field, or null for ASCII only
 		/// </param>
 		public void ParseBuffer(byte[] header, Encoding nameEncoding)
 		{
@@ -617,7 +617,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// 'Write' header information to buffer provided, updating the <see cref="Checksum">check sum</see>.
 		/// </summary>
 		/// <param name="outBuffer">output buffer for header information</param>
-		/// <param name="nameEncoding">The <see cref="Encoding"/> used for the Name field</param>
+		/// <param name="nameEncoding">The <see cref="Encoding"/> used for the Name field, or null for ASCII only</param>
 		public void WriteHeader(byte[] outBuffer, Encoding nameEncoding)
 		{
 			if (outBuffer == null)
@@ -829,7 +829,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// The number of header bytes to parse.
 		/// </param>
 		/// <param name="encoding">
-		/// name encoding
+		/// name encoding, or null for ASCII only
 		/// </param>
 		/// <returns>
 		/// The name parsed.
@@ -921,7 +921,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <param name="buffer">The buffer to add to</param>
 		/// <param name="bufferOffset">The index of the first byte to add</param>
 		/// <param name="length">The number of characters/bytes to add</param>
-		/// <param name="encoding"></param>
+		/// <param name="encoding">name encoding, or null for ASCII only</param>
 		/// <returns>The next free index in the <paramref name="buffer"/></returns>
 		public static int GetNameBytes(string name, int nameOffset, byte[] buffer, int bufferOffset, int length, Encoding encoding)
 		{
@@ -1077,7 +1077,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <param name="buffer">The buffer to add to.</param>
 		/// <param name="bufferOffset">The offset to start adding at.</param>
 		/// <param name="length">The number of ascii characters to add.</param>
-		/// <param name="encoding">String encoding</param>
+		/// <param name="encoding">String encoding, or null for ASCII only</param>
 		/// <returns>The next free index in the buffer.</returns>
 		public static int GetAsciiBytes(string toAdd, int nameOffset, byte[] buffer, int bufferOffset, int length, Encoding encoding)
 		{

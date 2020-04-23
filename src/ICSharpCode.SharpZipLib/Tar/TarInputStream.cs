@@ -26,7 +26,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// Construct a TarInputStream with default block factor
 		/// </summary>
 		/// <param name="inputStream">stream to source data from</param>
-		/// <param name="nameEncoding">The <see cref="Encoding"/> used for the Name fields</param>
+		/// <param name="nameEncoding">The <see cref="Encoding"/> used for the Name fields, or null for ASCII only</param>
 		public TarInputStream(Stream inputStream, Encoding nameEncoding)
 			: this(inputStream, TarBuffer.DefaultBlockFactor, nameEncoding)
 		{
@@ -49,7 +49,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// </summary>
 		/// <param name="inputStream">stream to source data from</param>
 		/// <param name="blockFactor">block factor to apply to archive</param>
-		/// <param name="nameEncoding">The <see cref="Encoding"/> used for the Name fields</param>
+		/// <param name="nameEncoding">The <see cref="Encoding"/> used for the Name fields, or null for ASCII only</param>
 		public TarInputStream(Stream inputStream, int blockFactor, Encoding nameEncoding)
 		{
 			this.inputStream = inputStream;
@@ -704,7 +704,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 			/// Create an entry based on details in <paramref name="headerBuffer">header</paramref>
 			/// </summary>
 			/// <param name="headerBuffer">The buffer containing entry details.</param>
-			/// <param name="nameEncoding">The <see cref="Encoding"/> used for the Name fields</param>
+			/// <param name="nameEncoding">The <see cref="Encoding"/> used for the Name fields, or null for ASCII only</param>
 			/// <returns>A new <see cref="TarEntry"/></returns>
 			public TarEntry CreateEntry(byte[] headerBuffer, Encoding nameEncoding)
 			{
